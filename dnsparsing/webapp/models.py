@@ -4,7 +4,7 @@ from django.db import models
 
 class Product(models.Model):
     product_name = models.CharField(max_length = 100)
-    hreference = models.CharField(max_length = 400)
+    hreference = models.URLField(max_length = 400)
     product_price = models.FloatField()
     def __str__(self):
         return '%s' % (self.product_name)
