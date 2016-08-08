@@ -10,3 +10,11 @@ class Product(models.Model):
 
     def __str__(self):
         return '%s' % (self.product_name)
+
+
+class City(models.Model):
+    city_name = models.CharField(max_length=100)
+    city_id = models.CharField(max_length=100)
+
+    def __str__(self):
+        return '%s' % (self.city_name)
