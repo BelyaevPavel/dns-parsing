@@ -35,7 +35,7 @@ class Command(BaseCommand):
             for catalogue_ref in catalogue_refs_list:
                 try:
                     self.stdout.write(
-                        self.style.SUCCESS('entered a cycle %s %s' % catalogue_ref[0],catalogue_ref[1]))
+                        self.style.SUCCESS('entered a cycle %s %s' % catalogue_ref[0], catalogue_ref[1]))
                     c = Category.objects.get(category_name=catalogue_ref[1])
                     self.stdout.write(
                         self.style.SUCCESS('c found'))

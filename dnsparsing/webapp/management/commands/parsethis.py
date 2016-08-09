@@ -1,4 +1,3 @@
-# coding: utf-8
 import requests
 from django.db.models import Q
 from django.core.management.base import BaseCommand, CommandError
@@ -29,11 +28,11 @@ class Command(BaseCommand):
             sess.headers.update(headers)
             sess.get('http://www.dns-shop.ru/')
             cookies_dict = requests.utils.dict_from_cookiejar(sess.cookies)
-            # try:
-            city_list = City.objects.filter(check=True)
-            category_list = Category.objects.filter(check=True)
-            # except Exception:
-            #    raise CommandError('Something goes wrong while searching')
+            try:
+                city_list = City.objects.filter(check=True)
+                category_list = Category.objects.filter(check=True)
+            except Exception:
+                raise CommandError('Something goes wrong while searching')
             try:
                 if len(city_list) != 0:
                     for category in category_list:
@@ -54,11 +53,11 @@ class Command(BaseCommand):
                                     "div.product div.item-price span[data-product-param=\"price\"]")
                                 if not price:
                                     continue
-                                price = price[0].text
+                                price = float(price[0].text.replace(' ', ''))
                                 self.stdout.write(self.style.SUCCESS('product parsed'))
                                 try:
                                     p = Product.objects.get(product_name=name, city=city)
-                                    if p.product_price != price | p.hreference != ref:
+                                    if p.product_price != price or p.hreference != ref:
                                         price_old = p.product_price
                                         p.product_price = price
                                         hreference_old = p.hreference
@@ -81,8 +80,8 @@ class Command(BaseCommand):
                                 except MultipleObjectsReturned:
                                     self.stdout.write(
                                         self.style.ERROR(
-                                            'Multiple objects were found while searching %s in %s' % name,
-                                            city.city_name))
+                                            'Multiple objects were found while searching %s in %s' % (name,
+                                                                                                      city.city_name)))
                             self.stdout.write(self.style.SUCCESS('Successfully filled'))
                 else:
                     self.stdout.write('None city was selected')
