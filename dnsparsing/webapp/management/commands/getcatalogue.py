@@ -27,18 +27,27 @@ class Command(BaseCommand):
             page = sess.get(base_url)
             root = html.fromstring(page.content.decode('utf-8'))
             top_level_refs_list = [base_url + e.get('href') for e in root.cssselect("ul.catalog a.catalog-icon")]
-            for top_level_ref in top_level_refs_list:
-                catalogue_refs_list.extend(get_next_level_refs(top_level_ref, 'top-level', sess))
+            # for top_level_ref in top_level_refs_list:
+            catalogue_refs_list.extend(
+                get_next_level_refs('http://www.dns-shop.ru/catalog/17aa731316404e77/vstraivaemaya-texnika/',
+                                    'top-level', sess))
+            self.stdout.write(self.style.SUCCESS('catalogue_refs_list filled %s' % len(catalogue_refs_list)))
             for catalogue_ref in catalogue_refs_list:
                 try:
+                    self.stdout.write(
+                        self.style.SUCCESS('entered a cycle %s %s' % catalogue_ref[0],catalogue_ref[1]))
                     c = Category.objects.get(category_name=catalogue_ref[1])
+                    self.stdout.write(
+                        self.style.SUCCESS('c found'))
                     if c.category_reference != catalogue_ref[0]:
                         category_reference_old = c.category_reference
                         c.category_reference = catalogue_ref[0]
+                        self.stdout.write(
+                            self.style.SUCCESS('category parameters set'))
                         c.save()
                         self.stdout.write(
                             self.style.SUCCESS('UPDATED: %s %s to %s' % (
-                            c.category_name, category_reference_old, c.category_reference)))
+                                c.category_name, category_reference_old, c.category_reference)))
                     else:
                         self.stdout.write('ALREADY UP TO DATE: %s %s' % (c.id, c.category_name))
                 except ObjectDoesNotExist:
