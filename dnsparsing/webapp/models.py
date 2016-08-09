@@ -30,7 +30,7 @@ class Category(models.Model):
 class Product(models.Model):
     product_name = models.CharField(max_length=100)
     hreference = models.URLField(max_length=400)
-    product_price = models.FloatField()
+    product_price = models.FloatField(default=0)
     city = models.ForeignKey(City, on_delete=models.CASCADE)
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
 
